@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Preparando o ambiente para acessar o S3"
+      - aws --version  # Verificando a versão da AWS CLI
+
+  pre_build:
+    commands:
+      - echo "Definindo variáveis do serviço"
+      - echo "Caminho do arquivo: artifacts/${SERVICE_NAME}/imagedefinitions.json"
+      - echo "Definindo a variável SERVICE_PATH"
+      - export SERVICE_PATH="artifacts/${SERVICE_NAME}/imagedefinitions.json"
+
+  build:
+    commands:
+      - echo "Baixando o arquivo imagedefinitions.json do S3"
+      - aws s3 cp "s3://${ARTIFACT_BUCKET}/${SERVICE_PATH}" ./imagedefinitions.json
+
+  post_build:
+    commands:
+      - echo "Arquivo baixado e pronto para o deploy"
+
+artifacts:
+  files:
+    - imagedefinitions.json
